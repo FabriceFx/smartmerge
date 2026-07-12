@@ -38,7 +38,8 @@ function openGuide() {
  * Ouvre la boîte de dialogue modale pour la rédaction
  */
 function openComposer() {
-  const html = HtmlService.createHtmlOutputFromFile('Composer')
+  const html = HtmlService.createTemplateFromFile('Composer')
+    .evaluate()
     .setWidth(1000)
     .setHeight(650);
   SpreadsheetApp.getUi().showModalDialog(html, 'Préparation de la campagne');

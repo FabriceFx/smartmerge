@@ -18,7 +18,10 @@ function doGet(e) {
   }
   
   try {
-    const doc = SpreadsheetApp.getActiveSpreadsheet(); 
+    const docId = e.parameter.docId;
+    const doc = docId
+      ? SpreadsheetApp.openById(docId)
+      : SpreadsheetApp.getActiveSpreadsheet(); // Fallback pour compatibilité
     if (!doc) throw new Error("Document non lié.");
     
     const sheet = doc.getSheetByName(tabName);
@@ -34,14 +37,10 @@ function doGet(e) {
         if (idColIndex !== -1) {
           const idData = sheet.getRange(2, idColIndex + 1, numRows - 1, 1).getValues();
           
-          // Recherche linéaire
-          let targetRowIndex = -1;
-          for (let i = 0; i < idData.length; i++) {
-            if (idData[i][0] === trackingId) {
-              targetRowIndex = i + 2;
-              break;
-            }
-          }
+          // Recherche optimisée avec findIndex
+          const flatIds = idData.map(row => row[0]);
+          const found = flatIds.findIndex(id => id === trackingId);
+          const targetRowIndex = found !== -1 ? found + 2 : -1;
           
           if (targetRowIndex !== -1) {
             

@@ -56,6 +56,7 @@ function sendEmails(config) {
     const activeUserEmail = Session.getActiveUser().getEmail().toLowerCase();
     const isPersonal = activeUserEmail.endsWith('@gmail.com') || activeUserEmail.endsWith('@googlemail.com');
     const throttlingDelay = isPersonal ? 2000 : 500;
+    const docId = SpreadsheetApp.getActiveSpreadsheet().getId();
     
     // On trouve ou crée les colonnes de suivi
     let statusColIndex = headers.indexOf('Statut SmartMerge');
@@ -96,15 +97,21 @@ function sendEmails(config) {
     const openUpdates = new Array(numDataRows);
     const idUpdates = new Array(numDataRows);
     
-    // Charger la liste rouge globale
+    // Charger la liste rouge globale (avec cache 15 min)
     let globalBlacklist = [];
-    const doc = sheet.getParent();
-    const blacklistSheet = doc.getSheetByName('SmartMerge_Blacklist');
-    if (blacklistSheet) {
-      const blData = blacklistSheet.getDataRange().getValues();
-      for (let i = 1; i < blData.length; i++) {
-        if (blData[i][0]) globalBlacklist.push(blData[i][0].toString().toLowerCase().trim());
+    const cache = CacheService.getDocumentCache();
+    const cachedBlacklist = cache.get('smartmerge_blacklist');
+    if (cachedBlacklist) {
+      globalBlacklist = JSON.parse(cachedBlacklist);
+    } else {
+      const blacklistSheet = sheet.getParent().getSheetByName('SmartMerge_Blacklist');
+      if (blacklistSheet) {
+        const blData = blacklistSheet.getDataRange().getValues();
+        for (let i = 1; i < blData.length; i++) {
+          if (blData[i][0]) globalBlacklist.push(blData[i][0].toString().toLowerCase().trim());
+        }
       }
+      cache.put('smartmerge_blacklist', JSON.stringify(globalBlacklist), 900); // TTL 15 min
     }
     
     // Initialiser la progression (on compte combien on va réellement traiter)
@@ -177,7 +184,7 @@ function sendEmails(config) {
       
       // Injection du pixel de tracking uniquement si activé dans config
       if (config.tracking && webAppUrl && webAppUrl.length > 0 && webAppUrl.endsWith("exec")) {
-         const pixelUrl = `${webAppUrl}?action=track&id=${trackingId}&tab=${encodeURIComponent(sheet.getName())}`;
+         const pixelUrl = `${webAppUrl}?action=track&id=${trackingId}&tab=${encodeURIComponent(sheet.getName())}&docId=${encodeURIComponent(docId)}`;
          htmlBody = finalBody + `<br><img src="${pixelUrl}" width="1" height="1" style="display:none;" />`;
       } else {
          htmlBody = finalBody;
@@ -185,7 +192,7 @@ function sendEmails(config) {
       
       // Injection du lien de désinscription
       if (config.unsubscribeLink && webAppUrl && webAppUrl.length > 0 && webAppUrl.endsWith("exec")) {
-         const unsubUrl = `${webAppUrl}?action=unsubscribe&id=${trackingId}&tab=${encodeURIComponent(sheet.getName())}&email=${encodeURIComponent(emailAddress)}`;
+         const unsubUrl = `${webAppUrl}?action=unsubscribe&id=${trackingId}&tab=${encodeURIComponent(sheet.getName())}&email=${encodeURIComponent(emailAddress)}&docId=${encodeURIComponent(docId)}`;
          htmlBody += `<br><br><div style="font-size:11px;color:#999;text-align:center;"><a href="${unsubUrl}" style="color:#999;text-decoration:underline;">Se désinscrire</a></div>`;
       }
       
@@ -202,7 +209,7 @@ function sendEmails(config) {
       }
 
       try {
-        GmailApp.sendEmail(emailAddress, finalSubject, '', emailOptions);
+        sendEmailWithRetry(emailAddress, finalSubject, '', emailOptions);
         
         statusUpdates[arrayIndex] = ['Envoyé'];
         openUpdates[arrayIndex] = ['-'];

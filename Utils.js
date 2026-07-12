@@ -50,3 +50,27 @@ function mergeTemplate(template, row, headers) {
   }
   return result;
 }
+
+/**
+ * Envoie un e-mail avec mécanisme de relance (Exponential Backoff)
+ * En cas de micro-coupure Google, retente automatiquement jusqu'à maxRetries fois.
+ * Délais : 2s → 4s → 8s...
+ * @param {string} emailAddress 
+ * @param {string} subject 
+ * @param {string} body 
+ * @param {Object} options 
+ * @param {number} maxRetries 
+ */
+function sendEmailWithRetry(emailAddress, subject, body, options, maxRetries = 3) {
+  let attempt = 0;
+  while (attempt < maxRetries) {
+    try {
+      GmailApp.sendEmail(emailAddress, subject, body, options);
+      return; // Succès
+    } catch (e) {
+      attempt++;
+      if (attempt >= maxRetries) throw e; // Échec définitif après tous les essais
+      Utilities.sleep(Math.pow(2, attempt) * 1000); // Backoff : 2s, 4s, 8s...
+    }
+  }
+}
