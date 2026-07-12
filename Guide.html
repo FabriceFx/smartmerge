@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Roboto', sans-serif; padding: 20px; line-height: 1.6; color: #1f1f1f; }
+    h1 { color: #0b57d0; font-size: 24px; margin-top: 0; }
+    h2 { color: #0b57d0; font-size: 18px; margin-top: 30px; border-bottom: 1px solid #e1e2e8; padding-bottom: 5px; }
+    code { background: #f1f3f4; padding: 2px 6px; border-radius: 4px; font-family: monospace; }
+    .alert { background: #e8f0fe; padding: 16px; border-radius: 8px; border-left: 4px solid #0b57d0; margin: 16px 0; }
+    .alert strong { color: #0842a0; display: block; margin-bottom: 8px; }
+    ul { padding-left: 20px; }
+    li { margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <h1>🚀 Guide de Démarrage : SmartMerge</h1>
+  
+  <h2>📋 1. Préparer vos données</h2>
+  <p>L'outil peut générer une feuille d'exemple pour vous. Allez dans <strong>Extensions > SmartMerge > 🧪 Générer données de test</strong>. Cela créera un onglet avec des contacts prêts à l'emploi. <i>La première ligne utilisera automatiquement votre e-mail de compte Google pour tester !</i></p>
+
+  <h2>🛠️ 2. Lancer l'application</h2>
+  <p>Assurez-vous d'être sur l'onglet contenant vos contacts, puis cliquez sur <strong>SmartMerge > 🚀 Tableau de bord</strong> pour afficher vos statistiques.</p>
+
+  <h2>✉️ 3. Rédiger votre campagne</h2>
+  <ul>
+    <li>Cliquez sur <strong>Nouvelle campagne</strong>.</li>
+    <li>Vérifiez la <strong>Colonne e-mail</strong>.</li>
+    <li>Cliquez sur les étiquettes bleues (ex: <code>{{Prénom}}</code>) pour insérer des variables personnalisées dans l'objet ou le message.</li>
+    <li>L'aperçu en direct (à droite) vous montre exactement le résultat final.</li>
+  </ul>
+
+  <h2>🎯 4. Gérer les destinataires et les modèles</h2>
+  <p>À droite, décochez simplement les personnes à qui vous ne souhaitez pas envoyer le message. Vous n'avez pas besoin de les supprimer de votre tableur.</p>
+  <p>Si vous comptez réutiliser ce mail, cliquez sur <strong>Sauvegarder le modèle</strong>. L'objet, le texte, le nom d'expéditeur et les options seront mémorisés pour la prochaine fois !</p>
+
+  <h2>📊 5. Suivi des Ouvertures (Tracking)</h2>
+  <p>Dans la fenêtre de rédaction, vous pouvez cocher "Suivi des ouvertures". Un pixel invisible sera ajouté à chaque e-mail pour savoir quand il est lu.</p>
+  <div class="alert">
+    <strong>⚠️ Comment activer le tracking (À FAIRE UNE SEULE FOIS)</strong>
+    Pour que le pixel fonctionne, vous devez "publier" ce script sur le web afin qu'il puisse être contacté :
+    <ol>
+      <li>Allez dans le menu <strong>Extensions > Apps Script</strong>.</li>
+      <li>En haut à droite, cliquez sur <strong>Déployer > Nouveau déploiement</strong>.</li>
+      <li>Sur la roue crantée (⚙️), choisissez : <strong>Application Web</strong>.</li>
+      <li>Exécuter en tant que : <strong>Moi</strong>.</li>
+      <li>Qui a accès : <strong>Tous</strong> (Très important ! Sinon le tracking ne marchera pas).</li>
+      <li>Cliquez sur <strong>Déployer</strong>.</li>
+    </ol>
+  </div>
+  <p>Une fois cette opération effectuée, la colonne "Date d'ouverture" se remplira automatiquement au fil de l'eau, et votre tableau de bord affichera votre taux de réussite !</p>
+
+  <h2>⚖️ 6. Conformité RGPD et Anti-Spam</h2>
+  <div class="alert" style="border-left-color: #d23f31;">
+    <strong style="color: #b3261e;">Règles d'or pour atterrir en boîte de réception</strong>
+    <ul>
+      <li><strong>B2B vs B2C :</strong> En B2C (particuliers), le consentement préalable (opt-in) est obligatoire. En B2B (professionnels), vous pouvez envoyer un e-mail sans consentement si l'offre est liée à leur profession, mais l'opt-out reste obligatoire.</li>
+      <li><strong>Authentification du domaine :</strong> Il est aujourd'hui indispensable de configurer les protocoles <strong>SPF, DKIM et DMARC</strong> sur votre nom de domaine via votre hébergeur web ou la console Google Workspace.</li>
+      <li><strong>Désinscription :</strong> L'outil intègre une option "Lien de désinscription automatique". Utilisez-la systématiquement pour rester en conformité avec la loi.</li>
+      <li><strong>Hygiène de la base :</strong> Supprimez les adresses qui n'ouvrent jamais ou qui n'existent plus. L'outil vous y aide grâce à la colonne "Statut SmartMerge".</li>
+    </ul>
+  </div>
+</body>
+</html>
