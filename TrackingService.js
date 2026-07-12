@@ -61,6 +61,7 @@ function doGet(e) {
                     blacklistSheet.getRange('A1:B1').setFontWeight('bold');
                   }
                   blacklistSheet.appendRow([emailToBlacklist.toString().toLowerCase().trim(), new Date()]);
+                  CacheService.getDocumentCache().remove('smartmerge_blacklist'); // Invalider le cache
                 }
                 
                 return renderHtmlMessage("Vous avez été désinscrit avec succès. Vous ne recevrez plus de messages de notre part.", true);

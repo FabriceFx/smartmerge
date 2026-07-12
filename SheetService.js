@@ -146,7 +146,8 @@ function removeFromBlacklist(email) {
     const data = sheet.getDataRange().getValues();
     for (let i = 1; i < data.length; i++) {
       if (data[i][0] && data[i][0].toString().toLowerCase().trim() === email.toLowerCase().trim()) {
-        sheet.deleteRow(i + 1); // +1 because array is 0-indexed and sheet is 1-indexed
+        sheet.deleteRow(i + 1);
+        CacheService.getDocumentCache().remove('smartmerge_blacklist'); // Invalider le cache
         return true;
       }
     }
